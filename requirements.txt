@@ -1,0 +1,5 @@
+# Django related requirements
+django==1.5
+django-localflavor==1.0
+django-registration==1.0
+django-olwidget==0.61.0

@@ -14,11 +14,6 @@ export VIRTUAL_ENV=$(venvdir)
 #export PATH := $(shell pwd)/$(staticdir)/node_modules/.bin:$(venvdir)/bin:$(PATH)
 export PATH := $(venvdir)/bin:$(PATH)
 
-#VPATH = $(staticdir)/app/styles:$(staticdir)/app/scripts
-#vpath %.coffee $(dir $(coffeesrc))
-#vpath %.less $(dir $(less_src))
-#vpath %.png $(dir $(imgsrc))
-
 INSTALL ?= install
 # Find path to compileall.py to create python bytecode
 PYC ?= python $(shell python -c 'import compileall; print(compileall.__file__)')

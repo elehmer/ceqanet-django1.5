@@ -1,0 +1,44 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Comment Detail{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+    <h3>Document Comment:</h3>
+    <table width="767" border="0" cellpadding="3">
+      <tr> 
+        <td> 
+          <b>SCH Number:</b>{{ doccomment.dcom_drag_fk.drag_doc_fk.doc_schno }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Reviewing Agency Making Comment:</b> {{ doccomment.dcom_drag_fk.drag_rag_fk.rag_name }}
+        </td>
+      </tr>
+      {% if doccomment.dcom_textcomment %}
+      <tr> 
+        <td> 
+          <b>Text Comment:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          {{ doccomment.dcom_textcomment }}
+        </td>
+      </tr>
+      {% endif %}
+      {% if doccomment.dcom_filecomment %}
+      <tr> 
+        <td> 
+          <b>Comment Attached as PDF:</b> <a href="{{ doccomment.dcom_filecomment.url }}">{{ doccomment.dcom_filecomment.name }}</a>
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <b>Date of Comment:</b> {{ doccomment.dcom_commentdate }}
+        </td>
+      </tr>
+    </table>
+{% endblock listing %}

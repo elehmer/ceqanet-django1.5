@@ -1,0 +1,86 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <h4>CEQANet User List</h4>
+  <FORM id="manageusersform" name="manageusersform" method="get" action="">
+    <TABLE border="0">
+      <TR>
+        <TD>
+          <B>{{ form.userfilter.label }}</B>{{ form.userfilter }}
+        </TD>
+        <TD>
+          <input id="filter" type="submit" value="Filter Accounts">          
+          <input id="reset" type="button" value="Reset">
+        </TD>
+      </TR>
+    </TABLE>
+  </FORM>
+  <script>
+    $(document).ready(function() {
+        $("#reset").click(function() {
+          $("#id_userfilter").val("");
+          $("#manageusersform").submit();
+        });
+    });
+  </script>
+  <TABLE border="1">
+    <TR>
+      <TH align="center" width="10%">
+        User Name
+      </TH>
+      <TH align="center" width="10%">
+        First Name
+      </TH>
+      <TH align="center" width="20%">
+        Last Name
+      </TH>
+      <TH align="center" width="10%">
+        Active
+      </TH>
+      <TH align="center" width="10%">
+        Group
+      </TH>
+      <TH align="center" width="10%">
+        Lead Agency
+      </TH>
+      <TH align="center" width="10%">
+        Reviewing Agency
+      </TH>
+      <TH align="center" width="20%">
+        Date Joined
+      </TH>
+    </TR> 
+    {% for u in users %}
+      <TR>
+        <TD align="center">
+          <a href="{% url 'manageuser' %}?user_id={{ u.pk }}"><i>{{ u.username }}</i></a>
+        </TD>
+        <TD align="center">
+          {{ u.first_name }}
+        </TD>
+        <TD align="center">
+          {{ u.last_name }}
+        </TD>
+        <TD align="center">
+          {{ u.is_active }}
+        </TD>
+        <TD align="center">
+          {{ u.groups.all.0 }}
+        </TD>
+        <TD align="center">
+          {{ u.get_profile.set_lag_fk.lag_name }}
+        </TD>
+        <TD align="center">
+          {{ u.get_profile.set_rag_fk.rag_name }}
+        </TD>
+        <TD align="center">
+          {{ u.date_joined }}
+        </TD>
+      </TR>
+    {% endfor %}
+  </TABLE>
+
+{% endblock content %}

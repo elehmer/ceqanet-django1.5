@@ -1,0 +1,62 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+
+  {% if object_list %}
+ 	<TABLE border="1">
+ 	  <TR>
+ 	  	<TH align="center" width="10%">
+ 	      City
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Cross Street
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="40%">
+ 	  	  Description
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Date Received
+ 	  	</TH>
+ 	  </TR> 
+    {% for prjdoc in prjdocs %}
+    <TR>
+    	<TD align="center">
+  	    {{ prjdoc.doc_city }}
+  	  </TD>
+    	<TD align="center">
+  	    {{ prjdoc.doc_xstreets }}
+  	  </TD>
+      {% if prjdoc.doc_doctype = 'NOE' or prjdoc.doc_docname.strip = 'Notice of Exemption' %}
+    	<TD align="center" valign="center">
+        <a href="{% url 'docdesp_noe' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% elif prjdoc.doc_doctype = 'NOD' or prjdoc.doc_docname.strip = 'Notice of Determination' %}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_nod' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% elif prjdoc.doc_doctype = 'NOP' or prjdoc.doc_docname.strip = 'Notice of Preperation' %}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_nop' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% else %}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_noc' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% endif %}
+    	<TD align="center">
+  	    {{ prjdoc.doc_description }}
+  	  </TD>
+    	<TD align="center">
+        {{ prjdoc.doc_received }}
+  	  </TD>
+    </TR>
+  	{% endfor %}
+    </TABLE>
+  {% endif %}
+
+{% endblock listing %}

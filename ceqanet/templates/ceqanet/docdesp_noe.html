@@ -1,0 +1,382 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
+
+{% load staticfiles %}
+
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
+{% block extrajs %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/minimap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/minimap.css' %}">
+<script type="text/javascript">
+//take the doc id get the geojson and add it to the map centering on the data
+var doc={{doc}};
+</script>
+{% endblock extrajs %}
+
+{% block listing %}
+  <div id="tophtml">
+    <h3>Document Description:</h3>
+    <table width="767" border="0" cellpadding="3">
+      <tr> 
+        <td> 
+          <b>SCH Number:</b> <a href="{% url 'doclist' %}?prj_schno={{ doc.doc_prj_fk.prj_schno }}&sortfld=-doc_received&mode=basic">{{ doc.doc_prj_fk.prj_schno }}</a>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Title:</b> 
+          {% if doc.doc_title %}
+            {{ doc.doc_title }}
+          {% else %}
+            {{ doc.doc_prj_fk.prj_title }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Description:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_description %}
+            {{ doc.doc_description }}
+          {% else %}
+            {{ doc.doc_prj_fk.prj_description }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
+        </td>
+      </tr>
+      {% if doc.doc_approve_noe %}
+      <tr> 
+        <td> 
+          <b>Agency Approving Project:</b> {{ doc.doc_approve_noe }}
+        </td>
+      </tr>
+      {% endif %}
+      {% if doc.doc_carryout_noe %}
+      <tr> 
+        <td> 
+          <b>Person or Agency Carrying Out Project:</b> {{ doc.doc_carryout_noe }}
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Contact Information</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <th align="left">
+                Primary Contact:
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+               {{ doc.doc_conname }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conagency }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conphone }}
+              </td>
+            </tr>
+            {% if doc.doc_conemail %}
+            <tr>
+              <td align="left">
+                <a href="mailto:{{ doc.doc_conemail }}">{{ doc.doc_conemail }}</a>
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td align="left">
+                {{ doc.doc_conaddress1 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conaddress2 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_concity }}, {{ doc.doc_constate }} {{ doc.doc_conzip }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>  
+          <b>Project Location</b>
+        </td>
+      </tr>
+    </table>
+    </div>
+    <div id="map">
+    </div>
+    <div id="sources">
+    Background Map Sources: 
+    <a href="http://maps.stamen.com/">Stamen Designs</a> and 
+    <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+    </div>
+    <div id="attributes"></div>
+    <div id="bottomhtml">
+    <table width="767" border="0" cellpadding="3">      
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                Counties:
+                {% for cnty in counties %}
+                  {{ cnty.geow_shortname }}&nbsp;
+                {% endfor %}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Cities:
+                {% for cty in cities %}
+                  {{ cty.geow_shortname }}&nbsp;
+                {% endfor %}                
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Region: {{ doc.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Cross Streets: {{ doc.doc_xstreets }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                {% if latlongs.exists %}
+                  {% for ll in latlongs %}
+                    Latitude/Longitude: {{ ll.doc_latitude }} / {{ ll.doc_longitude }}
+                  {% endfor %}
+                {% else %}
+                  Latitude/Longitude:
+                {% endif %}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Parcel No: {{ doc.doc_parcelno }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Township: {{ doc.doc_township }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Range: {{ doc.doc_range }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Section: {{ doc.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Base: {{ doc.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Other Location Info: {{ doc.doc_location }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Exempt Status</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exministerial %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Ministerial
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exdeclared %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Declared Emergency
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exemergency %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Emergency Project
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_excategorical %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Categorical Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exstatutory %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Statutory Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Type, Section or Code Number:</b> {{ doc.doc_exnumber }}  
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Reasons for Exemption</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ doc.doc_exreasons }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Attachments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% if attachments %}
+              {% for a in attachments %}
+                <li>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>NO ATTACHMENTS</li>
+            {% endif %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Additional Comments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            <li>
+              {% if comments %}
+                {{ doc.doc_clerknotes }}
+              {% else %}
+                NONE
+              {% endif %}
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Date Received:</b> {{ doc.doc_received }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <hr width="100%">
+        </td>
+      </tr>
+      {% for g in user.groups.all %}
+      {% if g.name = "planners" or g.name = "clearinghouse" %}
+      <tr>
+        <td>
+          <button onclick="window.location = '{% url 'docedit_noe' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
+        </td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+  </div>
+  
+{% endblock listing %}

@@ -1,0 +1,181 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block extrajs %}
+
+<script type="text/javascript">
+  function removeatt(pk) {
+    document.attachments.attpk.value = pk;
+    document.attachments.mode.value = 'remove';
+    document.attachments.submit();
+  }
+</script>
+
+{% endblock extrajs %}
+
+{% block content %}
+
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TH colspan="3" align="left">
+        <h3>Attach Related
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
+          Optional
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+          Optional
+        {% endif %}
+         Electronic Information:</h3>
+      </TH>
+    </TR>
+    <TR> 
+      <TD colspan="3" align="left">
+        Use the interface below to attach PDF files to this document 
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
+          (Optional)
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+          (Optional)
+        {% endif %}:
+      </TD>
+    </TR>  
+    <TR> 
+      <TD colspan="3" align="left">
+        <TABLE>
+          <TR>
+            <TH align="left">
+              Project Title:
+            </TH>
+            <TD align="left">
+              {{ doc.doc_prj_fk.prj_title }}
+            </TD>
+          </TR>
+          <TR>
+            <TH align="left">
+              Document Type:
+            </TH>
+            <TD align="left">
+              {{ doc.doc_doctype }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="2">
+              &nbsp;
+            </TD>
+          </TR>
+          <TR>
+            <TD align="left">
+              {% if doc.doc_doct_fk.keyw_pk = 109 %}
+                <button onclick="window.location = '{% url 'draftedit_noe' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+                <button onclick="window.location = '{% url 'draftedit_nod' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% elif doc.doc_doct_fk.keyw_pk = 102 %}
+                <button onclick="window.location = '{% url 'draftedit_nop' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% else %}
+                <button onclick="window.location = '{% url 'draftedit_noc' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% endif %}
+            </TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+<FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+    <TR> 
+      <TH colspan="3" align="left">
+        <h5>Attachment Inteface</h5>
+      </TH>
+    </TR>    
+    <TR> 
+      <TH colspan="3" align="left">
+        <B>{{ form.datt_file.label }}</B> {{ form.datt_file }}
+      </TH>
+    </TR>    
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3" align="left"> 
+        <input id="attach" type="button" value="Attach File...">
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3">
+        <TABLE BORDER="1" WIDTH="100%">
+          <TR>
+            <TH BGCOLOR="#000000" colspan="2">
+              <FONT COLOR="#FFFFFF">
+                List of Files Attached to Document
+              </FONT>
+            </TH>
+          </TR>
+          {% if attachments %}
+            {% for a in attachments %}
+              <TR>
+                <TD>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
+                </TD>
+                <TD align="middle">
+                  <input id="attpk_{{a.pk}}" class="remove" type="submit" value="Delete" onClick=removeatt({{a.pk}})>
+                </TD>
+              </TR>
+            {% endfor %}
+          {% else %}
+            <TR>
+              <TD align="center" colspan="2">
+                NO FILES ATTACHED
+              </TD>
+            </TR>      
+          {% endif %}
+        </TABLE>
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD align="left"> 
+        <input id="submitch" type="button" value="Submit to CEQANet >>">
+      </TD>
+      <TD align="right"> 
+        <input id="delete" type="button" value="Delete Draft">
+      </TD>
+      <TD align="right"> 
+        <input id="draft" type="button" value="Save Draft">
+      </TD>
+    </TR>
+  </TABLE>
+  <input id="mode" type="hidden" name="mode" value="">
+  <input id="attpk" type="hidden" name="attpk" value="">
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+  <script>
+    $('#attach').click(function() {
+      if ($('#id_datt_file').val()) {
+        $('#mode').val('attach');
+        $('#attachments').submit();
+      }
+    });
+    $('#submitch').click(function() {
+      $('#mode').val('submitch');
+      $('#attachments').submit();
+    });
+    $('#draft').click(function() {
+      $('#mode').val('draft');
+      $('#attachments').submit();
+    });
+    $('#delete').click(function() {
+      $('#mode').val('delete');
+      $('#attachments').submit();
+    });
+  </script>
+</FORM>
+
+{% endblock content %}

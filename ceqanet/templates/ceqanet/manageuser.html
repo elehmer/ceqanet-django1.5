@@ -1,0 +1,181 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<FORM id="manageuserform" name="manageuserform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="left" colspan="2">
+        <h3>Manage User</h3>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>User Id:</b> {{ usr.pk }}
+      </TD>
+      <TD>
+        <B>{{ form.usr_grp.label }}</B>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>User Name:</b> {{ usr.username }}
+      </TD>
+      <TD rowspan="8">
+        <table>
+          <tr>
+            {% for u in form.usr_grp %}
+              <td>
+                {{ u }}
+              </td>
+            {% endfor %}
+          </tr>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk.label }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk.errors }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk.label }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk.errors }}
+            </TD>
+          </TR>
+          <tr>
+            <TD colspan="4">
+              <input id="assign" type="button" value="Assign Group">
+            </TD>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>First Name:</b> {{ usr.first_name }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Last Name:</b> {{ usr.last_name }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Email:</b> {{ usr.email }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Phone:</b> {{ usr.get_profile.conphone }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Date Joined:</b> {{ usr.date_joined }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Is Active?:</b> {{ usr.is_active }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Last Login:</b> {{ usr.last_login }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {% if usr.is_active %}
+          <input id="deactivate" type="button" value="Deactivate Account">
+        {% else %}
+          <input id="activate" type="button" value="Activate Account">
+        {% endif %}
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" id="mode" name="mode" value="">
+  <input type="hidden" name="user_id" value="{{ usr.pk }}">
+  <script>
+    $(document).ready(function() {
+        if ($("#usr_grp_0").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', true);
+        }
+        if ($("#usr_grp_1").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', true);
+        }
+        if ($("#usr_grp_2").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', false);
+        }
+        if ($("#usr_grp_3").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', false);
+        }
+        $("#usr_grp_0").click(function() {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', true);
+          $("#id_set_lag_fk").val("");
+          $("#id_set_rag_fk").val("");
+        });
+        $("#usr_grp_1").click(function() {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").val("");
+        });
+        $("#usr_grp_2").click(function() {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', false);
+        });
+        $("#usr_grp_3").click(function() {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', false);
+          $("#id_set_lag_fk").val("");
+        });
+        $("#assign").click(function() {
+          $("#mode").val("assign");
+          $("#manageuserform").submit();
+        });
+        $("#deactivate").click(function() {
+          $("#mode").val("deactivate");
+          $("#manageuserform").submit();
+        });
+        $("#activate").click(function() {
+          $("#mode").val("activate");
+          $("#manageuserform").submit();
+        });
+    });
+  </script>
+</FORM>
+<button onclick="window.location = '/user/manageusers'">Back to Manage Users</button>
+
+{% endblock content %}

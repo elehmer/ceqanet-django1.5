@@ -1,0 +1,74 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <FORM NAME="submit" METHOD="post" ACTION="">
+    {% csrf_token %}
+    <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr>
+        <td colspan="3">
+          <h4>Submit New Document to CEQANet Clearinghouse:</h4>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Lead Agency:
+        </td>
+        <td>
+          {{ laginfo.lag_name }}
+        </td>
+        <td>
+          &nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Document Type:
+        </td>
+        <td colspan="2">
+          {{ form.doctype }}
+        </td>
+      </tr>
+      <TR>
+        <tD colspan="3">
+          Is there an existing project associated with this document?:
+        </TD>
+      </TR>
+      <TR>
+        {% for r in form.prjtoggle %}
+        <TD>
+          {{ r }}
+        </TD>
+        {% endfor %}
+        <TD>
+          &nbsp;
+        </TD>
+      </TR>
+      <script>
+        $("#id_doctype").change(function() {
+          if ($(this).val() == 'NOE') {
+            $("#prjtoggle_1").prop('checked', true)
+            $(".prjtoggle").prop('disabled', true);
+          }
+          else {
+            $(".prjtoggle").prop('disabled', false);            
+          }
+        });
+      </script>
+      <TR>
+        <TD colspan="3">
+          <input id="next" type="submit" value="Next >>">
+        </TD>
+      </TR>
+      <script>
+        $("#next").click(function() {
+          $(".prjtoggle").prop('disabled', false);        
+        });
+      </script>
+    </table>
+  </FORM>
+
+{% endblock content %}

@@ -1,0 +1,74 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<FORM id="findproject" name="findproject" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD colspan="2" align="left">
+        Find an Existing Project within CEQAnet
+      </TD>
+    </TR>
+  </TABLE>
+  <TABLE border="1">
+    <TR>
+      <TH align="center" width="5%">
+        &nbsp;
+      </TH>
+      <TH align="center" width="10%">
+        SCH#
+      </TH>
+      <TH align="center" width="10%">
+        Lead Agency
+      </TH>
+      <TH align="center" width="20%">
+        Project Title
+      </TH>
+      <TH align="center" width="25%">
+        Project Description
+      </TH>
+      <TH align="center" width="15%">
+        Date of First Document added to Project
+      </TH>
+      <TH align="center" width="15%">
+        Date of Last Document added to Project
+      </TH>
+    </TR> 
+    {% for schno in schnos %}
+      <TR>
+        <TD align="center">
+          <input type="radio" name="prj_pk" class="prj_pk" value="{{ schno.prj_pk }}">
+        </TD>
+        <TD align="center">
+          {{ schno.prj_schno }}
+        </TD>
+        <TD align="center">
+          {{ schno.prj_leadagency }}
+        </TD>
+        <TD align="center">
+          {{ schno.prj_title }}
+        </TD>
+        <TD align="center">
+          {{ schno.prj_description }}
+        </TD>
+        <TD align="center">
+          {{ schno.prj_datefirst }}
+        </TD>
+        <TD align="center">
+          {{ schno.prj_datelast }}
+        </TD>
+      </TR>
+    {% endfor %}
+    </TABLE>
+  <INPUT type="hidden" name="doctype" value="{{ doctype }}">
+  <INPUT type="hidden" name="leadorresp" value="{{ leadorresp }}">
+  <INPUT type="hidden" name="nodagency" value="{{ nodagency }}">
+  <script>
+  $('.prj_pk').change(function() {
+    $('#findproject').submit();
+  });
+  </script>
+</FORM>
+{% endblock content %}

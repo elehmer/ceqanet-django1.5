@@ -1,0 +1,443 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
+
+{% load staticfiles %}
+
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
+{% block extrajs %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/minimap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/minimap.css' %}">
+<script type="text/javascript">
+//take the doc id get the geojson and add it to the map centering on the data
+var doc={{detail}};
+</script>
+{% endblock extrajs %}
+
+{% block listing %}
+  <div id="tophtml">
+    <h1>Comment on Document:</h1>
+    <table width="767" border="0" cellpadding="3">
+      <tr> 
+        <td> 
+          <b>SCH Number:</b> {{ detail.doc_schno }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Title:</b> {{ detail.doc_prj_fk.prj_title }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Description:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ detail.doc_prj_fk.prj_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Alternate Title:</b> {{ detail.doc_title }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Alternate Description:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ detail.doc_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ detail.doc_doctype }}  - {{ detail.doc_docname }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ detail.doc_prj_fk.prj_leadagency }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Contact Information</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <th align="left">
+                Primary Contact:
+              </th>
+            </tr>
+            <tr>
+              <td align="left">
+               {{ detail.doc_conname }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ detail.doc_conagency }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ detail.doc_conphone }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ detail.doc_conaddress1 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ detail.doc_conaddress2 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ detail.doc_concity }}, {{ detail.doc_constate }} {{ detail.doc_conzip }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>  
+          <b>Project Location</b>
+        </td>
+      </tr>
+    </table>
+    </div>
+    <div id="map">
+    </div>
+    <div id="sources">
+    Background Map Sources: 
+    <a href="http://maps.stamen.com/">Stamen Designs</a> and 
+    <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+    </div>
+    <div id="attributes"></div>
+    <div id="bottomhtml">
+    <table width="767" border="0" cellpadding="3">
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                Counties:
+                {% for cnty in counties %}
+                  {{ cnty.geow_shortname }}&nbsp;
+                {% endfor %}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Cities:
+                {% for cty in cities %}
+                  {{ cty.geow_shortname }}&nbsp;
+                {% endfor %}                
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Region: {{ detail.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Cross Streets: {{ detail.doc_xstreets }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                {% if latlongs.exists %}
+                  {% for ll in latlongs %}
+                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                  {% endfor %}
+                {% else %}
+                  Latitude/Longitude:
+                {% endif %}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Parcel No: {{ detail.doc_parcelno }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Township: {{ detail.doc_township }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Range: {{ detail.doc_range }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Section: {{ detail.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Base: {{ detail.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Other Location Info: {{ detail.doc_location }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Proximity To</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                Highways: {{ detail.doc_highways }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Airports: {{ detail.doc_airports }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Railways: {{ detail.doc_railways }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Waterways: {{ detail.doc_waterways }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Schools: {{ detail.doc_schools }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Land Use: {{ detail.doc_landuse }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Local Action</b>
+        </td>
+      </tr>
+      <tr> 
+        <td class="content">
+          <ul>
+            {% for a in actions %}
+              <li>
+                {{ a.dkey_keyw_fk.keyw_longname }}
+                {% if a.dkey_comment %}
+                  {% if a.dkey_comment.strip != '' %}
+                    ({{ a.dkey_comment.strip }})
+                  {% endif %}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Development Type</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% for d in dev %}
+              <li>
+                {{ d.dkey_keyw_fk.keyw_longname }}
+                {% if d.dkey_comment %}
+                  {% if d.dkey_comment.strip != '' %}
+                    ({{ d.dkey_comment.strip }})
+                  {% endif %}
+                {% endif %} 
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Issues</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul> 
+            {% for i in issues %}
+              <li>
+                {{ i.dkey_keyw_fk.keyw_longname }}
+                {% if i.dkey_comment %}
+                  {% if i.dkey_comment.strip != '' %}
+                    ({{ i.dkey_comment.strip }})
+                  {% endif %}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Reviewing Agencies</b>  (Agencies in <b>Bold Type</b> submitted comment letters to the State Clearinghouse) 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul> 
+            {% for rev in reviews %}
+              {% if rev.drag_received = None %}
+                <li>{{ rev.drag_rag_fk.rag_name }}
+              {% else %}
+                <li><B>{{ rev.drag_rag_fk.rag_name }}</B>
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Attachments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% if attachments %}
+              {% for a in attachments %}
+                <li>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>NO ATTACHMENTS</li>
+            {% endif %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Date Received:</b> {{ detail.doc_received }}&nbsp; 
+          <b>Start of Review:</b>
+          {% if detail.doc_dept != None %} 
+            {{ detail.doc_dept }}&nbsp; 
+          {% endif %}&nbsp;&nbsp;&nbsp; 
+          <b>End of Review:</b> 
+          {% if detail.doc_clear != None %} 
+            {{ detail.doc_clear }} 
+          {% endif %}
+        </td>
+      </tr>
+      <TR>
+        <TD>
+          <h5>Official CEQA Comment Section</h5>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <button onclick="window.location = '{% url 'commentadd' %}?doc_pk={{ detail.doc_pk }}'">Add Official CEQA Comment</button>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          &nbsp;
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          List of Official CEQA Comments made by your Agency on this document:
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <TABLE>
+            {% for comment in comments %}
+            <TR>
+              <TD>
+                <A HREF="{% url 'showcomment' comment.dcom_pk %}">Comment #{{ forloop.counter }}: {{ comment.dcom_commentdate }}</A>
+              </TD>
+            </TR>
+            {% endfor %}
+          </TABLE>
+        </TD>
+      </TR>
+    </table>
+  </div>
+
+{% endblock listing %}

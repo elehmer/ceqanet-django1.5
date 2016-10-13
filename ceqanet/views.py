@@ -5207,7 +5207,10 @@ def doc_location(request,doc_id):
     #djf = Django.Django(geodjango="geom")
     #geoj = GeoJSON.GeoJSON()
     #string = geoj.encode(djf.decode(locations_qs))
-    string1 = locations_qs[0].geojson
+    if not locations_qs:
+        string1 = ''
+    else:
+        string1 = locations_qs[0].geojson
     #string = locations_qs[0].centroid
     #string1 = OGRGeometry(string).json
     return HttpResponse(string1)

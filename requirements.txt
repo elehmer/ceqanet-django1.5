@@ -1,5 +1,8 @@
 # Django related requirements
-django==1.5
+django==1.5.4
+psycopg2==2.4.5
 django-localflavor==1.0
 django-registration==1.0
 django-olwidget==0.61.0
+vectorformats==0.1
+simplejson==2.3.2

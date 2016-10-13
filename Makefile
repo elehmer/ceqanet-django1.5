@@ -4,14 +4,13 @@ rootdir = $(prefix)/ceqanet.ca.gov
 pkgroot = $(rootdir)/$(pkgname)
 
 staticdir = $(pkgname)/static
-appdirs = $(addprefix $(pkgname)/, app)
+templatesdir = $(pkgname)/templates
 # Support virtualenvwrapper installations and ../env
 venvdir ?= $(or $(wildcard ../env), $(HOME)/.virtualenvs/$(pkgname))
 
 # Environment variables for all subshells.
 # Always use a virtualenv.
 export VIRTUAL_ENV=$(venvdir)
-#export PATH := $(shell pwd)/$(staticdir)/node_modules/.bin:$(venvdir)/bin:$(PATH)
 export PATH := $(venvdir)/bin:$(PATH)
 
 INSTALL ?= install
@@ -20,7 +19,7 @@ PYC ?= python $(shell python -c 'import compileall; print(compileall.__file__)')
 pyver ?= $(shell python -c \
 	"import sys; print('python{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
 
-.PHONY : all build venv watch
+.PHONY : all build venv olwidget-templates olwidget-static
 
 all: build
 
@@ -31,4 +30,12 @@ $(venvdir)/bin/activate: requirements.txt
 	. $@; pip install -r $^
 	touch $@
 
-build: venv $(addsuffix c, $(pysrc))
+# Link olwidget template directory in venv to project template dir
+olwidget-templates:
+	ln -nfs $(venvdir)/olwidget/templates/olwidget $(templatesdir)/olwidget
+
+# Link olwidget static directory in venv to project static dir
+olwidget-static:
+	ln -nfs $(venvdir)/olwidget/static/olwidget $(staticdir)/olwidget
+
+build: venv olwidget-templates olwidget-static $(addsuffix c, $(pysrc))

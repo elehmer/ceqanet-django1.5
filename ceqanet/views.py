@@ -1678,7 +1678,8 @@ class docedit_noc(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -2428,7 +2429,8 @@ class docedit_nop(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -2714,7 +2716,8 @@ class addholiday(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -3032,7 +3035,8 @@ class pendingdetail_noc(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -3829,7 +3833,8 @@ class pendingdetail_nop(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -4232,7 +4237,8 @@ class reviewdetail_noc(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
@@ -4616,7 +4622,8 @@ class reviewdetail_nop(FormView):
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
 
-        hlist = hlist[:-1]
+        if len(hlist) > 1:
+            hlist = hlist[:-1]
         hlist += "];"
         context['holidays'] = hlist
 
